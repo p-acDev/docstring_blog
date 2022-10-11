@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 #from .views import index, blog_detail
-from .views import PostListView, PostDetailView
+from .views import PostListView, PostDetailView, create_post
 
 urlpatterns = [
      path("articles/", PostListView.as_view(), name="blog-index"),
-     path("articles/<int:pk>", PostDetailView.as_view(), name="blog-detail")
+     path("articles/<int:pk>", PostDetailView.as_view(), name="blog-detail"),
+     path("articles/new", create_post, name="blog-create-post")
 ]

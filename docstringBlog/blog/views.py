@@ -1,7 +1,8 @@
-from typing import List
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post
 from django.views.generic import ListView, DetailView
+from .forms import PostForm
+from django.utils.text import slugify
 
 # Create your views here.
 # FBV
@@ -22,6 +23,37 @@ from django.views.generic import ListView, DetailView
 #     context["post"] = post
     
 #     return render(request, "blog/detail.html", context)
+
+def create_post(request):
+    
+    context = {}
+    
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            
+            slug = slugify(form.cleaned_data["title"])
+            
+            post = Post.objects.create(title=form.cleaned_data["title"],
+                                       content=form.cleaned_data["content"])
+
+            post.slug = slug
+            
+                       
+            for t in form.cleaned_data["tags"]:
+                post.tag.add(t)
+            
+            post.save()
+ 
+            return redirect("blog-index")
+    
+    else:    
+    
+        form = PostForm()
+    
+    context["form"] = form
+    
+    return render(request, "blog/create.html", context)
 
 # CBV
 class PostListView(ListView):
