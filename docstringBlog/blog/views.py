@@ -32,14 +32,15 @@ def create_post(request):
         form = PostForm(request.POST)
         if form.is_valid():
             
-            slug = slugify(form.cleaned_data["title"])
-            
+            # on pre crée l'objet pour qu'il ai un id etc ...
             post = Post.objects.create(title=form.cleaned_data["title"],
                                        content=form.cleaned_data["content"])
 
+            # pour faire un slug automatique
+            slug = slugify(form.cleaned_data["title"])
             post.slug = slug
             
-                       
+            # la relation m2m est comme une list. Il faut ajouter à la liste chaque tag selectionné.
             for t in form.cleaned_data["tags"]:
                 post.tag.add(t)
             
